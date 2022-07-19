@@ -71,9 +71,20 @@ class _NewCategoryBottomSheetState extends State<NewCategoryBottomSheet> {
               },
             ),
             const SizedBox(height: 8),
-            ButtonBar(
-              alignment: MainAxisAlignment.spaceAround,
-              children: _getListOfIconButtons(context),
+            // List if icons for category
+            Column(
+              children: [
+                const Text('Choose icon'),
+                SingleChildScrollView(
+                  controller: ScrollController(initialScrollOffset: 0),
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  child: ButtonBar(
+                    alignment: MainAxisAlignment.spaceAround,
+                    children: _getListOfIconButtons(context),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             ButtonBar(
@@ -105,8 +116,6 @@ class _NewCategoryBottomSheetState extends State<NewCategoryBottomSheet> {
                   style: TextButton.styleFrom(
                     elevation: 0,
                     enableFeedback: true,
-                    primary: Theme.of(context).colorScheme.primary,
-                    textStyle: Theme.of(context).textTheme.button,
                     backgroundColor: Theme.of(context).canvasColor,
                     shadowColor: Theme.of(context).colorScheme.primary,
                     fixedSize: const Size(124, 42),
@@ -175,14 +184,11 @@ class _NewCategoryBottomSheetState extends State<NewCategoryBottomSheet> {
   }
 
   _getListOfIconButtons(BuildContext context) {
-    return ListView(
-      scrollDirection: Axis.horizontal,
-      children: List.generate(CategoriesIcon.icons.length,
-          (index) => _buildIconButton(context, index)),
-    );
+    return List.generate(CategoriesIcon.icons.length,
+        (index) => _buildIconButton(context, index));
   }
 
-  _buildIconButton(BuildContext context, int index) {
+  Widget _buildIconButton(BuildContext context, int index) {
     return IconButton(
       onPressed: () {
         setState(() {
