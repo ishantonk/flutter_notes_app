@@ -1,48 +1,47 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_notes_app/pages/pages.dart';
-import 'package:flutter_notes_app/widgets/header.dart';
+import 'package:flutter_notes_app/widgets/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import '../widgets/cards/cards.dart';
 
-class ArchivePage extends StatelessWidget {
-  const ArchivePage({Key? key}) : super(key: key);
+class NotesPage extends StatelessWidget {
+  const NotesPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         // --Header--
-        header(context, 2), // 2 is the index of the archive page
+        header(context, 0),
         // --Staggered-grid-view--
-        // --Cards--
         Expanded(
           // Use expand for the height of the screen
           child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection("Notes")
-                .where("isArchived", isEqualTo: true)
-                .snapshots(),
+            stream: FirebaseFirestore.instance.collection("Notes").snapshots(),
             initialData: null,
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
-              } else if (snapshot.data!.size == 0) {
+              } else if (!snapshot.hasData) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Image.asset(
-                      'assets/images/vault.png',
-                      fit: BoxFit.contain,
-                      alignment: Alignment.center,
+                    SingleChildScrollView(
+                      child: Image.asset(
+                        'assets/images/notes.png',
+                        fit: BoxFit.contain,
+                        alignment: Alignment.center,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text('No note found, add some...',
                         style: Theme.of(context).textTheme.bodyText1),
                   ],
                 );
+              } else if (snapshot.hasError) {
+                // TODO: Handle error
               } else if (snapshot.hasData) {
                 return MasonryGridView(
                   padding: const EdgeInsets.only(left: 8, right: 8),
@@ -59,6 +58,10 @@ class ArchivePage extends StatelessWidget {
                                 ));
                           }, note))
                       .toList(),
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
                 );
               }
               return const Center(child: Text('No Notes Found'));

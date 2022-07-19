@@ -1,7 +1,8 @@
 import 'package:firebase_core/firebase_core.dart'; // For firebase initialization
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // For status bar color
-import 'package:flutter_notes_app/pages/pages.dart';
+import 'package:flutter_notes_app/pages/homes/homes.dart'; // For homes page
+import 'package:flutter_notes_app/pages/pages.dart'; // For pages
 import 'package:flutter_notes_app/utils/utils.dart'; // For themes and router
 
 Future<void> main() async {
@@ -29,8 +30,8 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme(context),
       initialRoute: MyRoutes.landing,
       routes: {
-        MyRoutes.landing: (context) => const MainPage(),
-        MyRoutes.home: (context) => const HomePage(),
+        MyRoutes.landing: (context) => const LandingPage(),
+        MyRoutes.notes: (context) => const NotesPage(),
         MyRoutes.category: (context) => const CategoryPage(),
         MyRoutes.archive: (context) => const ArchivePage(),
         MyRoutes.settings: (context) => const SettingsPage(),

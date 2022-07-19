@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_notes_app/utils/themes.dart';
-import 'package:flutter_notes_app/widgets/bottomSheets/bottom_sheets.dart';
+import 'package:flutter_notes_app/utils/utils.dart';
+import 'package:flutter_notes_app/widgets/widgets.dart';
 import 'package:iconsax/iconsax.dart';
 
 class EditNotePage extends StatefulWidget {

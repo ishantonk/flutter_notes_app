@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_notes_app/utils/themes.dart';
+import 'package:flutter_notes_app/utils/utils.dart';
 import 'package:iconsax/iconsax.dart';
 
 Widget categoryCard(Function()? onTap, QueryDocumentSnapshot doc) {

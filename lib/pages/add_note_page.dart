@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_notes_app/utils/themes.dart';
-import 'package:flutter_notes_app/widgets/bottomSheets/bottom_sheets.dart';
+import 'package:flutter_notes_app/utils/utils.dart';
+import 'package:flutter_notes_app/widgets/widgets.dart';
 import 'package:iconsax/iconsax.dart';
 
 class AddNotePage extends StatefulWidget {
@@ -13,11 +13,11 @@ class AddNotePage extends StatefulWidget {
 
 class _AddNotePageState extends State<AddNotePage> {
   int _colorId = 0;
+  String _category = 'General';
   final DateTime _dateCreated = DateTime.now();
   final DateTime _dateEdited = DateTime.now();
   final bool _isArchived = false;
   final bool _isPinned = false;
-  final String _category = 'General';
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
 
@@ -52,9 +52,6 @@ class _AddNotePageState extends State<AddNotePage> {
         TextButton.icon(
           style: TextButton.styleFrom(
             elevation: 0,
-            enableFeedback: true,
-            primary: Theme.of(context).colorScheme.primary,
-            textStyle: Theme.of(context).textTheme.button,
             backgroundColor: Theme.of(context).canvasColor,
             shadowColor: Theme.of(context).colorScheme.primary,
             fixedSize: const Size(124, 42),
@@ -72,8 +69,6 @@ class _AddNotePageState extends State<AddNotePage> {
           style: TextButton.styleFrom(
             elevation: 0,
             enableFeedback: true,
-            primary: Theme.of(context).colorScheme.primary,
-            textStyle: Theme.of(context).textTheme.button,
             backgroundColor: Theme.of(context).canvasColor,
             shadowColor: Theme.of(context).colorScheme.primary,
             fixedSize: const Size(124, 42),
@@ -164,45 +159,59 @@ class _AddNotePageState extends State<AddNotePage> {
   }
 
   // Function to get Bottom App Bar
-  BottomAppBar _noteBottomAppBar(BuildContext context) {
-    return BottomAppBar(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Iconsax.text_bold, size: 20),
+  Container _noteBottomAppBar(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 16.0),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(16)),
+        child: BottomAppBar(
+          color: Theme.of(context).canvasColor,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Iconsax.text_bold, size: 20),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Iconsax.text_italic, size: 20),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Iconsax.text_underline, size: 20),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Iconsax.textalign_justifycenter, size: 20),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Iconsax.link_214, size: 20),
+              ),
+              IconButton(
+                onPressed: () async {
+                  final data = await showModalBottomSheet(
+                    context: context,
+                    builder: (context) =>
+                        newNoteBottomSheet(context, _colorId, _category),
+                    enableDrag: true,
+                  );
+                  setState(() {
+                    if (data != null) {
+                      if (data['colorId'] != null) {
+                        _colorId = data['colorId'];
+                      } else if (data['category'] != null) {
+                        _category = data['category'];
+                      }
+                    }
+                  });
+                },
+                icon: const Icon(Iconsax.more, size: 20),
+              ),
+            ],
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Iconsax.text_italic, size: 20),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Iconsax.text_underline, size: 20),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Iconsax.textalign_justifycenter, size: 20),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Iconsax.link_214, size: 20),
-          ),
-          IconButton(
-            onPressed: () async {
-              final changedColor = await showModalBottomSheet(
-                context: context,
-                builder: (context) => newNoteBottomSheet(context, _colorId),
-                enableDrag: true,
-              );
-              setState(() {
-                if (changedColor != null) _colorId = changedColor;
-              });
-            },
-            icon: const Icon(Iconsax.more, size: 20),
-          ),
-        ],
+        ),
       ),
     );
   }

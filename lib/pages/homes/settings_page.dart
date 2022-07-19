@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_notes_app/widgets/header.dart';
+import 'package:flutter_notes_app/widgets/widgets.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);

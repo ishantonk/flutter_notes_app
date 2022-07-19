@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 
 const _colorPrimary = Color(0xFFF9A826);
 const _colorText = Color(0xFF343437);
@@ -152,5 +153,16 @@ class CategoriesColors {
     Color(0xFF9CBE37), // android green
     Color(0xFF1BACC6), // pacific blue
     Color(0xFFE9DFA5) // medium champagne
+  ];
+}
+
+class CategoriesIcon {
+  static const icons = [
+    Icon(Iconsax.note_1),
+    Icon(Icons.done_rounded),
+    Icon(Iconsax.book),
+    Icon(Icons.book_rounded),
+    Icon(Icons.my_library_books),
+    Icon(Icons.today_rounded),
   ];
 }

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_notes_app/utils/themes.dart';
-import 'package:flutter_notes_app/widgets/color_slider.dart';
+import 'package:flutter_notes_app/utils/utils.dart';
+import 'package:flutter_notes_app/widgets/widgets.dart';
 
 class NewCategoryBottomSheet extends StatefulWidget {
   const NewCategoryBottomSheet({Key? key}) : super(key: key);
@@ -14,6 +14,7 @@ class NewCategoryBottomSheet extends StatefulWidget {
 class _NewCategoryBottomSheetState extends State<NewCategoryBottomSheet> {
   final TextEditingController _categoryController = TextEditingController();
   int _currentColorId = 0;
+  int _currentIconId = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -34,28 +35,24 @@ class _NewCategoryBottomSheetState extends State<NewCategoryBottomSheet> {
             Text('Add New Category',
                 style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 16),
-            TextField(
-              controller: _categoryController,
-              textCapitalization: TextCapitalization.sentences,
-              maxLines: 1,
-              autofocus: true,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Theme.of(context).canvasColor,
-                hintText: 'Category name',
-                hintStyle: Theme.of(context).textTheme.subtitle1,
-                border: InputBorder.none,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: TextField(
+                controller: _categoryController,
+                textCapitalization: TextCapitalization.sentences,
+                maxLines: 1,
+                autofocus: true,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Theme.of(context).cardColor,
+                  hintText: 'Category name',
+                  hintStyle: Theme.of(context).textTheme.subtitle1,
+                  border: InputBorder.none,
+                ),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             ListTile(
-              enableFeedback: true,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              tileColor: Theme.of(context).canvasColor,
-              iconColor: Theme.of(context).popupMenuTheme.color,
-              textColor: Theme.of(context).popupMenuTheme.color,
               leading: const Icon(Icons.color_lens_rounded),
               trailing: CircleAvatar(
                 backgroundColor: CategoriesColors.colors[_currentColorId],
@@ -63,20 +60,20 @@ class _NewCategoryBottomSheetState extends State<NewCategoryBottomSheet> {
               title: const Text('Choose color'),
               onTap: () async {
                 final changedColor = await showModalBottomSheet(
-                    context: context,
-                    builder: (context) =>
-                        chooseCategoryColorBottomSheet(context),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(16))),
-                    enableDrag: true,
-                    isScrollControlled: true,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.onBackground);
+                  context: context,
+                  builder: (context) => chooseCategoryColorBottomSheet(context),
+                  enableDrag: true,
+                  isScrollControlled: true,
+                );
                 setState(() {
                   if (changedColor != null) _currentColorId = changedColor;
                 });
               },
+            ),
+            const SizedBox(height: 8),
+            ButtonBar(
+              alignment: MainAxisAlignment.spaceAround,
+              children: _getListOfIconButtons(context),
             ),
             const SizedBox(height: 16),
             ButtonBar(
@@ -125,6 +122,8 @@ class _NewCategoryBottomSheetState extends State<NewCategoryBottomSheet> {
                             {
                               'name': _categoryController.text,
                               'colorId': _currentColorId,
+                              'createdAt': Timestamp.now(),
+                              'iconId': _currentIconId,
                             },
                           )
                           .then((value) => Navigator.pop(context))
@@ -173,5 +172,24 @@ class _NewCategoryBottomSheetState extends State<NewCategoryBottomSheet> {
             ),
           ),
         ]));
+  }
+
+  _getListOfIconButtons(BuildContext context) {
+    return ListView(
+      scrollDirection: Axis.horizontal,
+      children: List.generate(CategoriesIcon.icons.length,
+          (index) => _buildIconButton(context, index)),
+    );
+  }
+
+  _buildIconButton(BuildContext context, int index) {
+    return IconButton(
+      onPressed: () {
+        setState(() {
+          _currentIconId = index;
+        });
+      },
+      icon: CategoriesIcon.icons[index],
+    );
   }
 }

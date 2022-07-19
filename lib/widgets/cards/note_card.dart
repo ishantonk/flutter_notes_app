@@ -1,10 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_notes_app/utils/themes.dart';
+import 'package:flutter_notes_app/utils/utils.dart';
+import 'package:flutter_notes_app/widgets/widgets.dart';
 
 Widget noteCard(context, Function()? onTap, QueryDocumentSnapshot doc) {
   return GestureDetector(
     onTap: onTap,
+    onLongPress: () {
+      showModalBottomSheet(
+        context: context,
+        builder: (context) => noteCardLongPressBottomSheet(context, doc),
+      );
+    },
     child: Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
@@ -30,15 +37,15 @@ Widget noteCard(context, Function()? onTap, QueryDocumentSnapshot doc) {
             if (doc['content'] != null)
               Text(
                 doc['content'],
-                maxLines: 10,
+                maxLines: 15,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.bottomRight,
               child: Text(
-                '${doc['dateCreated'].toDate().weekday}:${doc['dateCreated'].toDate().month}',
+                doc['dateCreated'].toDate().toString().split(' ')[0],
                 overflow: TextOverflow.fade,
                 maxLines: 1,
                 style: Theme.of(context).textTheme.caption,

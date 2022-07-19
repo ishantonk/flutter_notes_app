@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_notes_app/widgets/bottomSheets/bottom_sheets.dart';
+import 'package:flutter_notes_app/widgets/widgets.dart';
 import 'package:iconsax/iconsax.dart';
 
 Widget header(BuildContext context, int pageIndex) {

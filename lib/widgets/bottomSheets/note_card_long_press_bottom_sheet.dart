@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_notes_app/utils/utils.dart';
 import 'package:flutter_notes_app/widgets/widgets.dart';
 import 'package:iconsax/iconsax.dart';
 
-Widget newNoteBottomSheet(
-    BuildContext context, int currentColorId, String category) {
+Container noteCardLongPressBottomSheet(BuildContext context, doc) {
+  final currentNote =
+      FirebaseFirestore.instance.collection('Notes').doc(doc.id);
   return Container(
     padding: const EdgeInsets.all(16.0),
     child: Column(
@@ -21,18 +22,16 @@ Widget newNoteBottomSheet(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
           ),
-          leading: const Icon(Iconsax.category5),
-          trailing: Text(category),
-          title: const Text('Choose category'),
-          onTap: () async {
-            final changedCategory = await showModalBottomSheet(
+          leading: const Icon(Iconsax.category),
+          title: const Text('Category'),
+          trailing: Text('${doc['category']}'),
+          onTap: () => {
+            Navigator.pop(context),
+            showModalBottomSheet(
               context: context,
               builder: (context) =>
-                  chooseCategoryBottomSheet(context, category),
-            );
-            Map<String, dynamic> data;
-            data = {'category': changedCategory};
-            Navigator.pop(context, data);
+                  changeCategoryBottomSheet(context, doc.id, doc['category']),
+            ),
           },
         ),
         const SizedBox(height: 8),
@@ -40,10 +39,12 @@ Widget newNoteBottomSheet(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
           ),
-          leading: const Icon(Iconsax.image5),
-          title: const Text('Add image'),
+          leading: const Icon(Iconsax.paperclip_2),
+          title: const Text('Pin'),
+          trailing: Text(doc['isPinned'] ? 'Pinned' : 'Unpinned'),
           onTap: () => {
             Navigator.pop(context),
+            currentNote.update({'isPinned': !doc['isPinned']}),
           },
         ),
         const SizedBox(height: 8),
@@ -51,34 +52,25 @@ Widget newNoteBottomSheet(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
           ),
-          leading: const Icon(Iconsax.clipboard_text),
-          title: const Text('Clipboard'),
+          leading: const Icon(Iconsax.archive),
+          title: Text(doc['isArchived'] ? 'Archive' : 'Unarchive'),
           onTap: () => {
-            Navigator.pop(context),
+            currentNote.update({'isArchived': !doc['isArchived']}),
           },
         ),
         const SizedBox(height: 8),
         ListTile(
+          iconColor: Theme.of(context).errorColor,
+          textColor: Theme.of(context).errorColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
           ),
-          leading: const Icon(Iconsax.textalign_left),
-          title: const Text('Font alignment'),
+          leading: const Icon(Iconsax.trash),
+          title: const Text('Delete note'),
           onTap: () => {
-            Navigator.pop(context),
+            currentNote.delete(),
           },
         ),
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.only(left: 8, right: 8),
-          child: SizedBox(
-            height: 48,
-            width: MediaQuery.of(context).size.width,
-            child: ColorSlider(
-                currentColorId: currentColorId, colorsList: NotesColors.colors),
-          ),
-        ),
-        const SizedBox(height: 16),
       ],
     ),
   );

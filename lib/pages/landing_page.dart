@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_notes_app/pages/homes/homes.dart';
 import 'package:flutter_notes_app/pages/pages.dart';
 import 'package:iconsax/iconsax.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+class LandingPage extends StatefulWidget {
+  const LandingPage({Key? key}) : super(key: key);
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<LandingPage> createState() => _LandingPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _LandingPageState extends State<LandingPage> {
   int _screenIndex = 0;
   final screens = [
-    const HomePage(),
+    const NotesPage(),
     const CategoryPage(),
     const ArchivePage(),
     const SettingsPage(),
@@ -42,7 +43,7 @@ class _MainPageState extends State<MainPage> {
       // bottomNavigationBar
 
       bottomNavigationBar: SizedBox(
-        height: 52,
+        height: 56,
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(16),

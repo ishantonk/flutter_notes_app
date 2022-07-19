@@ -1,23 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_notes_app/pages/pages.dart';
-import 'package:flutter_notes_app/widgets/cards/cards.dart';
-import 'package:flutter_notes_app/widgets/header.dart';
+import 'package:flutter_notes_app/widgets/widgets.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-class CategoryPage extends StatelessWidget {
-  const CategoryPage({Key? key}) : super(key: key);
+class ArchivePage extends StatelessWidget {
+  const ArchivePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         // --Header--
-        header(context, 1),
+        header(context, 2), // 2 is the index of the archive page
+        // --Staggered-grid-view--
         // --Cards--
         Expanded(
+          // Use expand for the height of the screen
           child: StreamBuilder<QuerySnapshot>(
-            stream:
-                FirebaseFirestore.instance.collection("Categories").snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection("Notes")
+                .where("isArchived", isEqualTo: true)
+                .snapshots(),
+            initialData: null,
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
@@ -28,41 +33,34 @@ class CategoryPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Image.asset(
-                      'assets/images/folder.png',
+                      'assets/images/vault.png',
                       fit: BoxFit.contain,
                       alignment: Alignment.center,
-                      semanticLabel: 'No results found',
                     ),
                     const SizedBox(height: 8),
-                    Text('No category found, add one...',
+                    Text('No note found, add some...',
                         style: Theme.of(context).textTheme.bodyText1),
                   ],
                 );
               } else if (snapshot.hasData) {
-                return GridView(
-                  padding: const EdgeInsets.all(16.0),
+                return MasonryGridView(
+                  padding: const EdgeInsets.only(left: 8, right: 8),
                   physics: const BouncingScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 24,
-                    crossAxisSpacing: 24,
-                  ),
+                  gridDelegate:
+                      const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2),
                   children: snapshot.data!.docs
-                      .map(
-                        (category) => categoryCard(() {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    OpenCategory(doc: category),
-                              ));
-                        }, category),
-                      )
+                      .map((note) => noteCard(context, () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditNotePage(doc: note),
+                                ));
+                          }, note))
                       .toList(),
                 );
               }
-              return Text('No Category Found',
-                  style: Theme.of(context).textTheme.headline5);
+              return const Center(child: Text('No Notes Found'));
             },
           ),
         ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_notes_app/utils/themes.dart';
-import 'package:flutter_notes_app/widgets/bottomSheets/bottom_sheets.dart';
-import 'package:flutter_notes_app/widgets/color_slider.dart';
+import 'package:flutter_notes_app/widgets/widgets.dart';
 import 'package:iconsax/iconsax.dart';
 
 Widget editNoteBottomSheet(BuildContext context, int currentColorId, doc) {

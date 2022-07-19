@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_notes_app/utils/themes.dart';
+import 'package:flutter_notes_app/utils/utils.dart';
 
 class ColorSlider extends StatefulWidget {
   const ColorSlider(
@@ -40,7 +40,10 @@ class _ColorSliderState extends State<ColorSlider> {
         setState(() {
           _currentColorId = index;
         });
-        Navigator.pop(context, _currentColorId);
+        final data = {
+          'colorId': _currentColorId,
+        };
+        Navigator.pop(context, data);
       },
       child: Container(
         margin: const EdgeInsets.only(right: 8),
