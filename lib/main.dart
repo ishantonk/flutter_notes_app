@@ -1,14 +1,13 @@
+import 'package:firebase_core/firebase_core.dart'; // For firebase initialization
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_notes_app/pages/add_note_page.dart';
-import 'package:flutter_notes_app/pages/home_page.dart';
-import 'package:flutter_notes_app/utils/routes.dart';
-import 'package:flutter_notes_app/widgets/themes.dart';
+import 'package:flutter/services.dart'; // For status bar color
+import 'package:flutter_notes_app/pages/pages.dart';
+import 'package:flutter_notes_app/utils/utils.dart'; // For themes and router
 
-void main() {
-  runApp(
-    const MyApp(),
-  );
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -26,12 +25,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: true, // Show debug banner.
       themeMode: ThemeMode.light,
-      theme: MyTheme.lightTheme(context),
-      darkTheme: MyTheme.darkTheme(context),
-      initialRoute: MyRoutes.home,
+      theme: AppTheme.lightTheme(context), // Set light theme.
+      darkTheme: AppTheme.darkTheme(context),
+      initialRoute: MyRoutes.landing,
       routes: {
-        MyRoutes.home: (context) => const MyHomePage(),
-        MyRoutes.addNote: (context) => const AddNote(),
+        MyRoutes.landing: (context) => const MainPage(),
+        MyRoutes.home: (context) => const HomePage(),
+        MyRoutes.category: (context) => const CategoryPage(),
+        MyRoutes.archive: (context) => const ArchivePage(),
+        MyRoutes.settings: (context) => const SettingsPage(),
+        MyRoutes.addNote: (context) => const AddNotePage(),
       },
     );
   }

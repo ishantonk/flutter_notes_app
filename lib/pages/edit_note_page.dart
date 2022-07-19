@@ -4,22 +4,37 @@ import 'package:flutter_notes_app/utils/themes.dart';
 import 'package:flutter_notes_app/widgets/bottomSheets/bottom_sheets.dart';
 import 'package:iconsax/iconsax.dart';
 
-class AddNotePage extends StatefulWidget {
-  const AddNotePage({Key? key}) : super(key: key);
+class EditNotePage extends StatefulWidget {
+  const EditNotePage({Key? key, required this.doc}) : super(key: key);
+  final QueryDocumentSnapshot doc;
 
   @override
-  State<AddNotePage> createState() => _AddNotePageState();
+  State<EditNotePage> createState() => _EditNotePageState();
 }
 
-class _AddNotePageState extends State<AddNotePage> {
+class _EditNotePageState extends State<EditNotePage> {
+  String _title = '';
+  String _content = '';
+  String _category = '';
   int _colorId = 0;
-  final DateTime _dateCreated = DateTime.now();
+  bool _isArchived = false;
+  bool _isPinned = false;
   final DateTime _dateEdited = DateTime.now();
-  final bool _isArchived = false;
-  final bool _isPinned = false;
-  final String _category = 'General';
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _title = widget.doc['title'];
+    _content = widget.doc['content'];
+    _category = widget.doc['category'];
+    _colorId = widget.doc['colorId'];
+    _isArchived = widget.doc['isArchived'];
+    _isPinned = widget.doc['isPinned'];
+    _titleController.text = _title;
+    _contentController.text = _content;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +47,7 @@ class _AddNotePageState extends State<AddNotePage> {
             children: [
               const SizedBox(height: 16),
               // --Header--
-              _addNoteHeader(context),
+              _editNoteHeader(context),
               // --Text-fields--
               _textFields(context),
               // --Bottom-app-bar--
@@ -44,8 +59,7 @@ class _AddNotePageState extends State<AddNotePage> {
     );
   }
 
-  // Function to create the header of the page.
-  Row _addNoteHeader(BuildContext context) {
+  Row _editNoteHeader(BuildContext context) {
     return Row(
       children: [
         // --Back-text-icon-button--
@@ -85,15 +99,15 @@ class _AddNotePageState extends State<AddNotePage> {
             if (_titleController.text.isNotEmpty) {
               await FirebaseFirestore.instance
                   .collection('Notes')
-                  .add({
+                  .doc(widget.doc.id)
+                  .update({
                     'title': _titleController.text,
                     'content': _contentController.text,
                     'category': _category,
                     'colorId': _colorId,
-                    'dateCreated': _dateCreated,
-                    'dateEdited': _dateEdited,
                     'isArchived': _isArchived,
                     'isPinned': _isPinned,
+                    'dateEdited': _dateEdited,
                   })
                   .then((value) => Navigator.pop(context))
                   .catchError((onError) => Navigator.pop(context));
@@ -134,7 +148,16 @@ class _AddNotePageState extends State<AddNotePage> {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Created: ${_dateCreated.toIso8601String()}',
+              'Created: ${widget.doc['dateCreated'].toDate().weekday.toString()} ${widget.doc['dateCreated'].toDate().day} ${widget.doc['dateCreated'].toDate().month} ${widget.doc['dateCreated'].toDate().year}',
+              style: Theme.of(context).textTheme.caption,
+            ),
+          ),
+          const SizedBox(height: 4.0),
+          // --Edited-date-text--
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Edited: ${_dateEdited.weekday} ${_dateEdited.day} ${_dateEdited.month} ${_dateEdited.year}',
               style: Theme.of(context).textTheme.caption,
             ),
           ),
@@ -193,7 +216,8 @@ class _AddNotePageState extends State<AddNotePage> {
             onPressed: () async {
               final changedColor = await showModalBottomSheet(
                 context: context,
-                builder: (context) => newNoteBottomSheet(context, _colorId),
+                builder: (context) =>
+                    editNoteBottomSheet(context, _colorId, widget.doc),
                 enableDrag: true,
               );
               setState(() {
